@@ -2,10 +2,7 @@
 
 
 #include "Item.h"
-#include "DrawDebugHelpers.h"
-#include "ProjectVesper/ProjectVesper.h"
-
-#define THIRTY 30
+#include "ProjectVesper/DebugMacros.h"
 
 
 // Sets default values
