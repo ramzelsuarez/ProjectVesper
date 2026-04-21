@@ -2,6 +2,11 @@
 
 
 #include "Item.h"
+#include "DrawDebugHelpers.h"
+#include "ProjectVesper/ProjectVesper.h"
+
+#define THIRTY 30
+
 
 // Sets default values
 AItem::AItem()
@@ -22,6 +27,16 @@ void AItem::BeginPlay()
 	{
 		GEngine->AddOnScreenDebugMessage(1, 60.f, FColor::Yellow, FString("Onscreen thingymajiggies!"));
 	}
+
+	UWorld* World = GetWorld();
+
+	if (World)
+	{
+		FVector Location = GetActorLocation();
+		DRAW_SPHERE(Location)
+	}
+
+	
 }
 
 // Called every frame
