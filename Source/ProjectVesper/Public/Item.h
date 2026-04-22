@@ -16,8 +16,16 @@ public:
 	virtual void Tick(float DeltaTime) override;
 protected:
 	virtual void BeginPlay() override;
-private:
-	float RunningTime;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
 	float Amplitude = 0.25f;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
 	float TimeConstant = 5.f;
+
+private:
+	UPROPERTY(VisibleAnywhere)
+	float RunningTime;
+
+	
 };
