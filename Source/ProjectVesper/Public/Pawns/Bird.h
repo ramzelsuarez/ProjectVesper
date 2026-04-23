@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Components/CapsuleComponent.h"
 #include "Bird.generated.h"
 
 UCLASS()
@@ -17,7 +18,11 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 protected:
 	virtual void BeginPlay() override;
+private:
+	UPROPERTY(VisibleAnywhere)
+	UCapsuleComponent* Capsule;
 
 };
