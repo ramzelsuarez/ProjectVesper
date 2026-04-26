@@ -9,6 +9,7 @@
 #include "EnhancedInputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "InputActionValue.h"
 
 // Sets default values
 ABird::ABird()
@@ -57,18 +58,6 @@ void ABird::MoveForward(float Value)
 	}
 }
 
-void ABird::Move(const FInputActionValue& Value)
-{
-	const float DirectionValue = Value.Get<float>();
-
-	if (Controller && (DirectionValue != 0.0f))
-	{
-		// add movement in that direction
-		FVector Forward = GetActorForwardVector();
-		AddMovementInput(Forward, DirectionValue);
-	}
-}
-
 void ABird::Look(const FInputActionValue& Value)
 {
 	const FVector2D LookAxisValue = Value.Get<FVector2D>();
@@ -97,3 +86,16 @@ void ABird::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	}
 }
 
+void ABird::Move(const FInputActionValue& Value)
+{
+	const FVector2D MovementVector = Value.Get<FVector2D>();
+
+	const FRotator Rotation = Controller->GetControlRotation();
+	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
+
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	AddMovementInput(ForwardDirection, MovementVector.Y);
+
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	AddMovementInput(RightDirection, MovementVector.X);
+}
