@@ -9,6 +9,8 @@
 
 class UInputMappingContext;
 class UInputAction;
+class USpringArmComponent;
+class UCameraComponent;
 
 UCLASS()
 class PROJECTVESPER_API AVesperCharacter : public ACharacter
@@ -24,8 +26,6 @@ public:
 	void EKeyPressed();
 	virtual void Attack(); // says it should have override but there are errors if I add it, so I left it as virtual for now
 	void Dodge();
-
-protected:
 
 protected:
 	virtual void BeginPlay() override;
@@ -54,4 +54,10 @@ protected:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 
+private:
+	UPROPERTY(VisibleAnywhere)
+	USpringArmComponent* CameraBoom;
+
+	UPROPERTY(VisibleAnywhere)
+	UCameraComponent* ViewCamera;
 };
