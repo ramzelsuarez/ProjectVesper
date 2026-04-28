@@ -24,5 +24,6 @@ void UVesperAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	if (VesperCharacterMovement)
 	{
 		GroundSpeed = UKismetMathLibrary::VSizeXY(VesperCharacterMovement->Velocity);
+		IsFalling = VesperCharacterMovement->IsFalling();
 	}
 }
