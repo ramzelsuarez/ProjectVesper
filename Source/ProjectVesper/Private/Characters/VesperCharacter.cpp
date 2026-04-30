@@ -13,6 +13,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GroomComponent.h"
+#include "Item.h"
+#include "Weapons/Weapon.h"
 
 AVesperCharacter::AVesperCharacter()
 {
@@ -78,6 +80,11 @@ void AVesperCharacter::Look(const FInputActionValue& Value)
 
 void AVesperCharacter::EKeyPressed()
 {
+	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
+	if (OverlappingWeapon)
+	{
+		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"));
+	}
 }
 
 void AVesperCharacter::Attack()

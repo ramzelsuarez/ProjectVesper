@@ -4,6 +4,7 @@
 #include "Item.h"
 #include "ProjectVesper/DebugMacros.h"
 #include "Components/SphereComponent.h"
+#include "Characters/VesperCharacter.h"
 
 
 // Sets default values
@@ -43,19 +44,19 @@ float AItem::TransformedCos()
 
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	const FString OtherActorName = OtherActor->GetName();
-	if (GEngine)
+	AVesperCharacter* VesperCharacter = Cast<AVesperCharacter>(OtherActor);
+	if (VesperCharacter)
 	{
-		GEngine->AddOnScreenDebugMessage(1, 30.f, FColor::Red, OtherActorName);
+		VesperCharacter->SetOverlappingItem(this);
 	}
 }
 
 void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	const FString OtherActorName = OtherActor->GetName();
-	if (GEngine)
+	AVesperCharacter* VesperCharacter = Cast<AVesperCharacter>(OtherActor);
+	if (VesperCharacter)
 	{
-		GEngine->AddOnScreenDebugMessage(1, 30.f, FColor::Blue, OtherActorName + " left the sphere");
+		VesperCharacter->SetOverlappingItem(nullptr);
 	}
 }
 
