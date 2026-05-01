@@ -59,7 +59,7 @@ void AVesperCharacter::BeginPlay()
 
 void AVesperCharacter::Move(const FInputActionValue& Value)
 {
-	//if (ActionState != EActionState::EAS_Unoccupied) return;
+	if (ActionState != EActionState::EAS_Unoccupied) return;
 
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -91,11 +91,17 @@ void AVesperCharacter::EKeyPressed()
 
 void AVesperCharacter::Attack()
 {
-	if (ActionState != EActionState::EAS_Unoccupied)
+	if (CanAttack())
 	{
-		ActionState = EActionState::EAS_Attacking;
 		PlayAttackMontage();
+		ActionState = EActionState::EAS_Attacking;
 	}
+}
+
+bool AVesperCharacter::CanAttack()
+{
+	return ActionState == EActionState::EAS_Unoccupied &&
+		CharacterState != ECharacterState::ECS_Unequipped;
 }
 
 void AVesperCharacter::Dodge()
@@ -126,6 +132,12 @@ void AVesperCharacter::PlayAttackMontage()
 		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
 	}
 }
+
+void AVesperCharacter::AttackEnd()
+{
+	ActionState = EActionState::EAS_Unoccupied;
+}
+
 
 void AVesperCharacter::Tick(float DeltaTime)
 {
