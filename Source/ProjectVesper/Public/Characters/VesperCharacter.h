@@ -14,6 +14,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UGroomComponent;
 class AItem;
+class UAnimMontage;
 
 UCLASS()
 class PROJECTVESPER_API AVesperCharacter : public ACharacter
@@ -75,6 +76,13 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly)
 	AItem* OverlappingItem;
+
+	/**
+	* Animation montages
+	*/
+
+	UPROPERTY(EditDefaultsOnly, Category = "Montages")
+	UAnimMontage* AttackMontage;
 
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
