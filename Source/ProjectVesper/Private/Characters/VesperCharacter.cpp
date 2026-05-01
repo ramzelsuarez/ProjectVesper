@@ -91,11 +91,24 @@ void AVesperCharacter::EKeyPressed()
 
 void AVesperCharacter::Attack()
 {
+	if (ActionState != EActionState::EAS_Unoccupied)
+	{
+		ActionState = EActionState::EAS_Attacking;
+		PlayAttackMontage();
+	}
+}
+
+void AVesperCharacter::Dodge()
+{
+}
+
+void AVesperCharacter::PlayAttackMontage()
+{
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && AttackMontage)
 	{
 		AnimInstance->Montage_Play(AttackMontage);
-		int32 Selection = FMath::RandRange(0, 1);
+		const int32 Selection = FMath::RandRange(0, 1);
 		FName SectionName = FName();
 		switch (Selection)
 		{
@@ -112,10 +125,6 @@ void AVesperCharacter::Attack()
 		}
 		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
 	}
-}
-
-void AVesperCharacter::Dodge()
-{
 }
 
 void AVesperCharacter::Tick(float DeltaTime)

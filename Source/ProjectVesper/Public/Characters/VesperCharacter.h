@@ -31,7 +31,15 @@ public:
 	virtual void Attack(); // says it should have override but there are errors if I add it, so I left it as virtual for now
 	void Dodge();
 
+	/**
+	* Play montage functions
+	*/
+	void PlayAttackMontage();
 protected:
+	/**
+	* Callbacks for input
+	*/
+	
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -61,6 +69,7 @@ protected:
 private:
 
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
+	EActionState ActionState = EActionState::EAS_Unoccupied;
 
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* CameraBoom;
