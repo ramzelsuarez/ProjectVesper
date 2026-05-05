@@ -16,6 +16,7 @@
 #include "Item.h"
 #include "Weapons/Weapon.h"
 #include "Animation/AnimMontage.h"
+#include "Components/BoxComponent.h"
 
 AVesperCharacter::AVesperCharacter()
 {
@@ -225,5 +226,13 @@ void AVesperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void AVesperCharacter::Jump()
 {
 	Super::Jump();
+}
+
+void AVesperCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled)
+{
+	if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
+	{
+		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
+	}
 }
 

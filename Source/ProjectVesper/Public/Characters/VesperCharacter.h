@@ -27,6 +27,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void Jump() override;
+
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
+
 	/** Callbacks for input actions */
 	void EKeyPressed();
 	virtual void Attack(); // says it should have override but there are errors if I add it, so I left it as virtual for now
