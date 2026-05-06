@@ -186,7 +186,7 @@ void AVesperCharacter::PlayAttackMontage()
 	}
 }
 
-void AVesperCharacter::PlayEquipMontage(FName SectionName)
+void AVesperCharacter::PlayEquipMontage(const FName& SectionName)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && EquipMontage)
