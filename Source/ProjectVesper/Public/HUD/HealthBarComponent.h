@@ -13,5 +13,9 @@ UCLASS()
 class PROJECTVESPER_API UHealthBarComponent : public UWidgetComponent
 {
 	GENERATED_BODY()
-	
+public:
+	void SetHealthBarPercent(float Percent);
+private:
+	UPROPERTY()
+	class UHealthBar* HealthBarWidget;
 };
