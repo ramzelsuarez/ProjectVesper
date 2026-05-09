@@ -26,4 +26,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
 	float MaxHealth;
+
+//public getters and setters
+public:
+	void ReceiveDamage(float Damage);
+	float GetHealthPercent();
 };
