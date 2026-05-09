@@ -7,8 +7,8 @@
 #include "Interfaces/HitInterface.h"
 #include "Enemy.generated.h"
 
-
 class UAnimMontage;
+class UAttributeComponent;
 
 UCLASS()
 class PROJECTVESPER_API AEnemy : public ACharacter, public IHitInterface
@@ -26,6 +26,10 @@ public:
 	void DirectionalHitReact(const FVector& ImpactPoint);
 
 private:
+	
+	UPROPERTY(VisibleAnywhere)
+	UAttributeComponent* Attributes;
+	
 	/**
 	* Animation montages
 	*/
