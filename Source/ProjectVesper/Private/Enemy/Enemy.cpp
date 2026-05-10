@@ -155,11 +155,16 @@ void AEnemy::PawnSeen(APawn* SeenPawn)
 	if (EnemyState == EEnemyState::EES_Chasing) return;
 	if (SeenPawn->ActorHasTag(FName("VesperCharacter")))
 	{
-		EnemyState = EEnemyState::EES_Chasing;
 		GetWorldTimerManager().ClearTimer(PatrolTimer);
 		GetCharacterMovement()->MaxWalkSpeed = 300.f;
 		CombatTarget = SeenPawn;
-		MoveToTarget(CombatTarget);
+
+		if (EnemyState != EEnemyState::EES_Attacking)
+		{
+			EnemyState = EEnemyState::EES_Chasing;
+			MoveToTarget(CombatTarget);
+			UE_LOG(LogTemp, Warning, TEXT("Pawn seen, Chase Player"));
+		}
 	}
 }
 
@@ -210,6 +215,22 @@ void AEnemy::CheckCombatTarget()
 		EnemyState = EEnemyState::EES_Patrolling;
 		GetCharacterMovement()->MaxWalkSpeed = 125.f;
 		MoveToTarget(PatrolTarget);
+		UE_LOG(LogTemp, Warning, TEXT("Returning to patrol"));
+	}
+	else if (!InTargetRange(CombatTarget, AttackRadius) && EnemyState != EEnemyState::EES_Chasing)
+	{
+		// When outside of attack radius but inside combat radius, chase target instead
+		EnemyState = EEnemyState::EES_Chasing;
+		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+		MoveToTarget(CombatTarget);
+		UE_LOG(LogTemp, Warning, TEXT("Chase Player"));
+	}
+	else if (InTargetRange(CombatTarget, AttackRadius) && EnemyState != EEnemyState::EES_Attacking)
+	{
+		// When inside attack radius, attack target
+		EnemyState = EEnemyState::EES_Attacking;
+		// TO DO: Attack Montage
+		UE_LOG(LogTemp, Warning, TEXT("Attaaaaack"));
 	}
 }
 
