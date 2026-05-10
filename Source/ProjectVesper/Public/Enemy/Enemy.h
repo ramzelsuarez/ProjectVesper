@@ -90,6 +90,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "AI Navigation")
 	float WaitMax = 10.f;
 
+	EEnemyState EnemyState = EEnemyState::EES_Patrolling;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -97,6 +99,8 @@ protected:
 	bool InTargetRange(AActor* Target, double Radius);
 	void MoveToTarget(AActor* Target);
 	AActor* ChoosePatrolTarget();
+
+	UFUNCTION()
 	void PawnSeen(APawn* SeenPawn);
 
 	/**

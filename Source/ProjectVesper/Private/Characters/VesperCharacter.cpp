@@ -49,6 +49,8 @@ void AVesperCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Tags.Add(FName("VesperCharacter"));
+
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
