@@ -111,6 +111,7 @@ void AVesperCharacter::EKeyPressed()
 
 void AVesperCharacter::Attack()
 {
+	Super::Attack();
 	if (CanAttack())
 	{
 		PlayAttackMontage();
@@ -165,6 +166,7 @@ void AVesperCharacter::Dodge()
 
 void AVesperCharacter::PlayAttackMontage()
 {
+	Super::PlayAttackMontage();
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && AttackMontage)
 	{
