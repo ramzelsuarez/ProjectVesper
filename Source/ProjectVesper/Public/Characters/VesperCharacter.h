@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "BaseCharacter.h"
 #include "InputActionValue.h"
 #include "CharacterTypes.h"
 #include "VesperCharacter.generated.h"
@@ -15,10 +15,9 @@ class UCameraComponent;
 class UGroomComponent;
 class AItem;
 class UAnimMontage;
-class AWeapon;
 
 UCLASS()
-class PROJECTVESPER_API AVesperCharacter : public ACharacter
+class PROJECTVESPER_API AVesperCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -28,22 +27,18 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void Jump() override;
 
-	UFUNCTION(BlueprintCallable)
-	void SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
-
 	/** Callbacks for input actions */
 	void EKeyPressed();
-	virtual void Attack(); // says it should have override but there are errors if I add it, so I left it as virtual for now
+	virtual void Attack() override; // says it should have override but there are errors if I add it, so I left it as virtual for now
 	void Dodge();
 
 	/**
 	* Play montage functions
 	*/
-	void PlayAttackMontage();
+	virtual void PlayAttackMontage() override;
 	
-	UFUNCTION(BlueprintCallable)
-	void AttackEnd();
-	bool CanAttack();
+	virtual void AttackEnd() override;
+	virtual bool CanAttack() override;
 	
 	void PlayEquipMontage(const FName& SectionName);
 	bool CanDisarm();
@@ -110,16 +105,6 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly)
 	AItem* OverlappingItem;
-
-	UPROPERTY(VisibleAnywhere, Category = Weapon)
-	AWeapon* EquippedWeapon;
-
-	/**
-	* Animation montages
-	*/
-
-	UPROPERTY(EditDefaultsOnly, Category = "Montages")
-	UAnimMontage* AttackMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Montages")
 	UAnimMontage* EquipMontage;
