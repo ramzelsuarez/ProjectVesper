@@ -12,6 +12,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "GroomComponent.h"
 #include "Item.h"
 #include "Weapons/Weapon.h"
@@ -27,6 +28,12 @@ AVesperCharacter::AVesperCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 400.f, 0.f);
+
+	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
+	GetMesh()->SetGenerateOverlapEvents(true);
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetRootComponent());
@@ -59,11 +66,17 @@ void AVesperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 }
 
+void AVesperCharacter::GetHit_Implementation(const FVector& ImpactPoint)
+{
+	PlayHitSound(ImpactPoint);
+	SpawnHitParticles(ImpactPoint);
+}
+
 void AVesperCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Tags.Add(FName("VesperCharacter"));
+	Tags.Add(FName("EngageableTarget"));
 
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -212,3 +225,4 @@ void AVesperCharacter::Jump()
 {
 	Super::Jump();
 }
+
