@@ -23,40 +23,35 @@ class PROJECTVESPER_API AVesperCharacter : public ABaseCharacter
 
 public:
 	AVesperCharacter();
-	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void Jump() override;
 
+protected:
+	virtual void BeginPlay() override;
+
 	/** Callbacks for input actions */
 	void EKeyPressed();
-	virtual void Attack() override; // says it should have override but there are errors if I add it, so I left it as virtual for now
+	virtual void Attack() override;
 	void Dodge();
 
-	/**
-	* Play montage functions
-	*/
+	/** Combat */
+	void EquipWeapon(AWeapon* Weapon);
 	virtual void AttackEnd() override;
 	virtual bool CanAttack() override;
-	
-	void PlayEquipMontage(const FName& SectionName);
 	bool CanDisarm();
-	bool CanArm();
-
-	UFUNCTION(BlueprintCallable)
+	bool CanArm();	
 	void Disarm();
+	void Arm();
+	void PlayEquipMontage(const FName& SectionName);
 
 	UFUNCTION(BlueprintCallable)
-	void Arm();
+	void AttachWeaponToBack();
+
+	UFUNCTION(BlueprintCallable)
+	void AttachWeaponToHand();
 
 	UFUNCTION(BlueprintCallable)
 	void FinishEquipping();
-
-protected:
-	/**
-	* Callbacks for input
-	*/
-	
-	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputMappingContext* VesperContext;
@@ -84,10 +79,7 @@ protected:
 
 private:
 
-	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
-
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	EActionState ActionState = EActionState::EAS_Unoccupied;
+	/** Character components */
 
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* CameraBoom;
@@ -106,6 +98,11 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Montages")
 	UAnimMontage* EquipMontage;
+
+	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	EActionState ActionState = EActionState::EAS_Unoccupied;
 
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
