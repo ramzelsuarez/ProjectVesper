@@ -68,8 +68,7 @@ void AVesperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AVesperCharacter::GetHit_Implementation(const FVector& ImpactPoint)
 {
-	PlayHitSound(ImpactPoint);
-	SpawnHitParticles(ImpactPoint);
+	Super::GetHit_Implementation(ImpactPoint);
 }
 
 void AVesperCharacter::BeginPlay()
