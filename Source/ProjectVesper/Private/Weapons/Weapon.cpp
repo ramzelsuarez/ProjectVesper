@@ -120,6 +120,11 @@ void AWeapon::BoxTrace(FHitResult& BoxHit)
 		ActorsToIgnore.AddUnique(Actor);
 	}
 
+	if (GetOwner())
+	{
+		ActorsToIgnore.Add(GetOwner());
+	}
+
 	UKismetSystemLibrary::BoxTraceSingle(
 		this,
 		Start,
