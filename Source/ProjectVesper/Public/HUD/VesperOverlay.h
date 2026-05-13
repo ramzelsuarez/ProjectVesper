@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
 #include "VesperOverlay.generated.h"
 
 /**
@@ -13,5 +15,23 @@ UCLASS()
 class PROJECTVESPER_API UVesperOverlay : public UUserWidget
 {
 	GENERATED_BODY()
-	
+public:
+
+	void SetHealthBarPercent(float Percent);
+	void SetStaminaBarPercent(float Percent);
+	void SetGold(int32 Gold);
+	void SetSouls(int32 Souls);
+
+private:
+	UPROPERTY(meta = (BindWidget))
+	class UProgressBar* HealthProgressBar;
+
+	UPROPERTY(meta = (BindWidget))
+	class UProgressBar* StaminaProgressBar;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* GoldText;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* SoulsText;
 };
