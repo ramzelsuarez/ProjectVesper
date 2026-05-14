@@ -13,6 +13,7 @@ UCLASS()
 class PROJECTVESPER_API AVesperHUD : public AHUD
 {
 	GENERATED_BODY()
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -22,4 +23,7 @@ private:
 	
 	UPROPERTY()
 	UVesperOverlay* VesperOverlay;
+
+public:
+	FORCEINLINE UVesperOverlay* GetVesperOverlay() const { return VesperOverlay; }
 };

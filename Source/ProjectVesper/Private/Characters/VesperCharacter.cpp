@@ -14,9 +14,12 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GroomComponent.h"
+#include "Components/AttributeComponent.h"
 #include "Item.h"
 #include "Weapons/Weapon.h"
 #include "Animation/AnimMontage.h"
+#include "HUD/VesperHUD.h"
+#include "HUD/VesperOverlay.h"
 
 AVesperCharacter::AVesperCharacter()
 {
@@ -86,13 +89,8 @@ void AVesperCharacter::BeginPlay()
 
 	Tags.Add(FName("EngageableTarget"));
 
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(VesperContext, 0);
-		}
-	}
+	InitializeVesperOverlay();
+	AddInputMappingContext();
 }
 
 void AVesperCharacter::Move(const FInputActionValue& Value)
@@ -115,6 +113,20 @@ void AVesperCharacter::Look(const FInputActionValue& Value)
 	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 	AddControllerYawInput(LookAxisVector.X);
 	AddControllerPitchInput(LookAxisVector.Y);
+}
+
+void AVesperCharacter::AddInputMappingContext()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (!PlayerController) return;
+
+	UEnhancedInputLocalPlayerSubsystem* Subsystem =
+	ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
+
+	if (Subsystem)
+	{
+		Subsystem->AddMappingContext(VesperContext, 0);
+	}
 }
 
 void AVesperCharacter::EKeyPressed()
@@ -228,6 +240,24 @@ void AVesperCharacter::FinishEquipping()
 void AVesperCharacter::HitReactEnd()
 {
 	ActionState = EActionState::EAS_Unoccupied;
+}
+
+void AVesperCharacter::InitializeVesperOverlay()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (!PlayerController) return;
+
+	AVesperHUD* VesperHUD = Cast<AVesperHUD>(PlayerController->GetHUD());
+	if (!VesperHUD) return;
+
+	VesperOverlay = VesperHUD->GetVesperOverlay();
+	if (VesperOverlay && Attributes)
+	{
+		VesperOverlay->SetHealthBarPercent(Attributes->GetHealthPercent());
+		VesperOverlay->SetStaminaBarPercent(1.f);
+		VesperOverlay->SetGold(0);
+		VesperOverlay->SetSouls(0);
+	}
 }
 
 void AVesperCharacter::Dodge()

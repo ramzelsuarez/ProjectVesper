@@ -15,6 +15,7 @@ class UCameraComponent;
 class UGroomComponent;
 class AItem;
 class UAnimMontage;
+class UVesperOverlay;
 
 UCLASS()
 class PROJECTVESPER_API AVesperCharacter : public ABaseCharacter
@@ -108,6 +109,12 @@ private:
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	EActionState ActionState = EActionState::EAS_Unoccupied;
+
+	UPROPERTY()
+	UVesperOverlay* VesperOverlay;
+
+	void InitializeVesperOverlay();
+	void AddInputMappingContext();
 
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
