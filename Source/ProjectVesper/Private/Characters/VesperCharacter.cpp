@@ -72,6 +72,8 @@ void AVesperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 float AVesperCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	HandleDamage(DamageAmount);
+	SetHUDHealth();
+
 	return DamageAmount;
 }
 
@@ -260,12 +262,29 @@ void AVesperCharacter::InitializeVesperOverlay()
 	}
 }
 
+void AVesperCharacter::SetHUDHealth()
+{
+	if (VesperOverlay && Attributes)
+	{
+		VesperOverlay->SetHealthBarPercent(Attributes->GetHealthPercent());
+	}
+}
+
 void AVesperCharacter::Dodge()
 {
+	// Will be added later on -- leave as is
 }
 
 void AVesperCharacter::Jump()
 {
-	Super::Jump();
+	if (IsUnoccupied())
+	{
+		Super::Jump();
+	}
+}
+
+bool AVesperCharacter::IsUnoccupied()
+{
+	return ActionState == EActionState::EAS_Unoccupied;
 }
 

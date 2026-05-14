@@ -27,6 +27,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void Jump() override;
+
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
 
 protected:
@@ -114,7 +115,9 @@ private:
 	UVesperOverlay* VesperOverlay;
 
 	void InitializeVesperOverlay();
+	void SetHUDHealth();
 	void AddInputMappingContext();
+	bool IsUnoccupied();
 
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
