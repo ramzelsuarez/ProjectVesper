@@ -26,5 +26,7 @@ void UVesperAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		GroundSpeed = UKismetMathLibrary::VSizeXY(VesperCharacterMovement->Velocity);
 		IsFalling = VesperCharacterMovement->IsFalling();
 		CharacterState = VesperCharacter->GetCharacterState();
+		ActionState = VesperCharacter->GetActionState();
+		DeathPose = VesperCharacter->GetDeathPose();
 	}
 }

@@ -97,8 +97,9 @@ void AEnemy::BeginPlay()
 
 void AEnemy::Die()
 {
+	Super::Die();
+
 	EnemyState = EEnemyState::EES_Dead;
-	PlayDeathMontage();
 	ClearAttackTimer();
 	HideHealthBar();
 	DisableCapsule();
@@ -138,18 +139,6 @@ void AEnemy::AttackEnd()
 {
 	EnemyState = EEnemyState::EES_NoState;
 	CheckCombatTarget();
-}
-
-int32 AEnemy::PlayDeathMontage()
-{
-	const int32 Selection = Super::PlayDeathMontage();
-	TEnumAsByte<EDeathPose> Pose(Selection);
-	if (Pose < EDeathPose::EDP_MAX)
-	{
-		DeathPose = Pose;
-	}
-
-	return Selection;
 }
 
 void AEnemy::InitializeEnemy()
@@ -294,7 +283,7 @@ void AEnemy::MoveToTarget(AActor* Target)
 	if (EnemyController == nullptr || Target == nullptr) return;
 	FAIMoveRequest MoveRequest;
 	MoveRequest.SetGoalActor(Target);
-	MoveRequest.SetAcceptanceRadius(50.f);
+	MoveRequest.SetAcceptanceRadius(100.f);
 	EnemyController->MoveTo(MoveRequest);
 }
 
