@@ -241,6 +241,8 @@ void AVesperCharacter::Die()
 {
 	Super::Die();
 
+	Tags.Add(FName("Dead"));
+
 	ActionState = EActionState::EAS_Dead;
 	DisableMeshCollision();
 }
