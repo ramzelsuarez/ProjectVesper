@@ -108,10 +108,18 @@ void AEnemy::Die()
 	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-void AEnemy::Attack()
+void AEnemy::Attack() //check if working properly
 {
-	EnemyState = EEnemyState::EES_Engaged;
 	Super::Attack();
+
+	if (CombatTarget == nullptr) return;
+
+	if (EnemyController)
+	{
+		EnemyController->StopMovement();
+	}
+
+	EnemyState = EEnemyState::EES_Engaged;
 	PlayAttackMontage();
 }
 
