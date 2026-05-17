@@ -20,6 +20,7 @@
 #include "Animation/AnimMontage.h"
 #include "HUD/VesperHUD.h"
 #include "HUD/VesperOverlay.h"
+#include "Interfaces/PickupInterface.h"
 
 AVesperCharacter::AVesperCharacter()
 {
@@ -86,6 +87,16 @@ void AVesperCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor*
 	{
 		ActionState = EActionState::EAS_HitReaction;
 	}
+}
+
+void AVesperCharacter::SetOverlappingItem(AItem* Item)
+{
+	OverlappingItem = Item;
+}
+
+void AVesperCharacter::AddSouls(ASoul* Soul)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Added souls!"));
 }
 
 void AVesperCharacter::BeginPlay()

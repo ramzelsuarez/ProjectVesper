@@ -6,6 +6,7 @@
 #include "BaseCharacter.h"
 #include "InputActionValue.h"
 #include "CharacterTypes.h"
+#include "Interfaces/PickupInterface.h"
 #include "VesperCharacter.generated.h"
 
 class UInputMappingContext;
@@ -14,11 +15,12 @@ class USpringArmComponent;
 class UCameraComponent;
 class UGroomComponent;
 class AItem;
+class ASoul;
 class UAnimMontage;
 class UVesperOverlay;
 
 UCLASS()
-class PROJECTVESPER_API AVesperCharacter : public ABaseCharacter
+class PROJECTVESPER_API AVesperCharacter : public ABaseCharacter, public IPickupInterface
 {
 	GENERATED_BODY()
 
@@ -29,7 +31,8 @@ public:
 	virtual void Jump() override;
 
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
-
+	virtual void SetOverlappingItem(AItem* Item) override;
+	virtual void AddSouls(ASoul* Soul) override;
 protected:
 	virtual void BeginPlay() override;
 
@@ -121,7 +124,6 @@ private:
 	bool IsUnoccupied();
 
 public:
-	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
 	FORCEINLINE EActionState GetActionState() const { return ActionState; }
 };

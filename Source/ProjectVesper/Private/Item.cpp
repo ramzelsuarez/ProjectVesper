@@ -4,7 +4,7 @@
 #include "Item.h"
 #include "ProjectVesper/DebugMacros.h"
 #include "Components/SphereComponent.h"
-#include "Characters/VesperCharacter.h"
+#include "Interfaces/PickupInterface.h"
 #include "NiagaraComponent.h"
 
 
@@ -50,19 +50,19 @@ float AItem::TransformedCos()
 
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AVesperCharacter* VesperCharacter = Cast<AVesperCharacter>(OtherActor);
-	if (VesperCharacter)
+	IPickupInterface* PickupInterface = Cast<IPickupInterface>(OtherActor);
+	if (PickupInterface)
 	{
-		VesperCharacter->SetOverlappingItem(this);
+		PickupInterface->SetOverlappingItem(this);
 	}
 }
 
 void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	AVesperCharacter* VesperCharacter = Cast<AVesperCharacter>(OtherActor);
-	if (VesperCharacter)
+	IPickupInterface* PickupInterface = Cast<IPickupInterface>(OtherActor);
+	if (PickupInterface)
 	{
-		VesperCharacter->SetOverlappingItem(nullptr);
+		PickupInterface->SetOverlappingItem(nullptr);
 	}
 }
 
