@@ -16,6 +16,7 @@ class UCameraComponent;
 class UGroomComponent;
 class AItem;
 class ASoul;
+class ATreasure;
 class UAnimMontage;
 class UVesperOverlay;
 
@@ -33,6 +34,7 @@ public:
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
 	virtual void SetOverlappingItem(AItem* Item) override;
 	virtual void AddSouls(ASoul* Soul) override;
+	virtual void AddGold(ATreasure* Treasure) override;
 protected:
 	virtual void BeginPlay() override;
 

@@ -2,7 +2,6 @@
 
 
 #include "Characters/VesperCharacter.h"
-
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -21,6 +20,8 @@
 #include "HUD/VesperHUD.h"
 #include "HUD/VesperOverlay.h"
 #include "Interfaces/PickupInterface.h"
+#include "Items/Soul.h"
+#include "Items/Treasure.h"
 
 AVesperCharacter::AVesperCharacter()
 {
@@ -96,7 +97,20 @@ void AVesperCharacter::SetOverlappingItem(AItem* Item)
 
 void AVesperCharacter::AddSouls(ASoul* Soul)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Added souls!"));
+	if (Attributes && VesperOverlay)
+	{
+		Attributes->AddSouls(Soul->GetSouls());
+		VesperOverlay->SetSouls(Attributes->GetSouls());
+	}
+}
+
+void AVesperCharacter::AddGold(ATreasure* Treasure)
+{
+	if (Attributes && VesperOverlay)
+	{
+		Attributes->AddGold(Treasure->GetGold());
+		VesperOverlay->SetGold(Attributes->GetGold());
+	}
 }
 
 void AVesperCharacter::BeginPlay()
