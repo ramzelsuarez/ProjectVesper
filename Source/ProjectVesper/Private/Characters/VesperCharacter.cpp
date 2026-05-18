@@ -25,7 +25,7 @@
 
 AVesperCharacter::AVesperCharacter()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -54,6 +54,15 @@ AVesperCharacter::AVesperCharacter()
 	Eyebrows = CreateDefaultSubobject<UGroomComponent>(TEXT("Eyebrows"));
 	Eyebrows->SetupAttachment(GetMesh());
 	Eyebrows->AttachmentName = FString("head");
+}
+
+void AVesperCharacter::Tick(float DeltaTime)
+{
+	if (Attributes && VesperOverlay)
+	{
+		Attributes->RegenStamina(DeltaTime);
+		VesperOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
+	}
 }
 
 void AVesperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -280,6 +289,16 @@ void AVesperCharacter::Die()
 	DisableMeshCollision();
 }
 
+bool AVesperCharacter::HasEnoughStamina()
+{
+	return Attributes && Attributes->GetStamina() > Attributes->GetDodgeCost();
+}
+
+bool AVesperCharacter::IsOccupied()
+{
+	return ActionState != EActionState::EAS_Unoccupied;
+}
+
 void AVesperCharacter::FinishEquipping()
 {
 	ActionState = EActionState::EAS_Unoccupied;
@@ -318,9 +337,15 @@ void AVesperCharacter::SetHUDHealth()
 
 void AVesperCharacter::Dodge()
 {
-	if (ActionState != EActionState::EAS_Unoccupied) return;
+	if (IsOccupied() || !HasEnoughStamina()) return;
+
 	PlayDodgeMontage();
 	ActionState = EActionState::EAS_Dodge;
+	if (Attributes && VesperOverlay)
+	{
+		Attributes->UseStamina(Attributes->GetDodgeCost());
+		VesperOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
+	}
 }
 
 void AVesperCharacter::Jump()
