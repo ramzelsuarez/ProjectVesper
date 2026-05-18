@@ -202,6 +202,13 @@ void AVesperCharacter::AttackEnd()
 	ActionState = EActionState::EAS_Unoccupied;
 }
 
+void AVesperCharacter::DodgeEnd()
+{
+	Super::DodgeEnd();
+
+	ActionState = EActionState::EAS_Unoccupied;
+}
+
 bool AVesperCharacter::CanAttack()
 {
 	return ActionState == EActionState::EAS_Unoccupied &&
@@ -311,7 +318,9 @@ void AVesperCharacter::SetHUDHealth()
 
 void AVesperCharacter::Dodge()
 {
-	// Will be added later on -- leave as is
+	if (ActionState != EActionState::EAS_Unoccupied) return;
+	PlayDodgeMontage();
+	ActionState = EActionState::EAS_Dodge;
 }
 
 void AVesperCharacter::Jump()
