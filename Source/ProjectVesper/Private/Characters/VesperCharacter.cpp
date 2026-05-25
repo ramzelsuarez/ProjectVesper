@@ -278,9 +278,9 @@ void AVesperCharacter::PlayEquipMontage(const FName& SectionName)
 	}
 }
 
-void AVesperCharacter::Die()
+void AVesperCharacter::Die_Implementation()
 {
-	Super::Die();
+	Super::Die_Implementation();
 
 	GetCharacterMovement()->StopMovementImmediately();
 
