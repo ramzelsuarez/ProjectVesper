@@ -91,8 +91,21 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* DodgeAction;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* SprintAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* CameraTransitionAction;
+
+	UFUNCTION(BlueprintCallable)
+	void StartGameplayCameraTransition();
+
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void StartSprint();
+	void StopSprint();
+	void ApplyMenuCameraPose();
+	void UpdateGameplayCameraTransition(float DeltaTime);
 
 private:
 
@@ -123,6 +136,42 @@ private:
 
 	UPROPERTY()
 	UVesperOverlay* VesperOverlay;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float WalkSpeed = 900.f;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float SprintSpeed = 1200.f;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float SprintStaminaDrainRate = 10.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera Transition", meta = (AllowPrivateAccess = "true"))
+	float MenuArmLength = 260.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera Transition", meta = (AllowPrivateAccess = "true"))
+	float GameplayArmLength = 300.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera Transition", meta = (AllowPrivateAccess = "true"))
+	float CameraTransitionDuration = 2.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera Transition", meta = (AllowPrivateAccess = "true"))
+	float MenuSocketOffsetZ = 80.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera Transition", meta = (AllowPrivateAccess = "true"))
+	float MenuPitch = -8.f;
+
+	bool bCameraTransitionActive = false;
+	float CameraTransitionElapsed = 0.f;
+
+	FRotator CameraTransitionStartRotation;
+	FRotator CameraTransitionTargetRotation;
+	float CameraTransitionStartArmLength = 300.f;
+	float GameplaySocketOffsetZ = 0.f;
+	float CameraTransitionStartSocketOffsetZ = 0.f;
+
+	bool bIsSprinting = false;
+	bool bIsInMenu = true;
 
 	void InitializeVesperOverlay();
 	void SetHUDHealth();

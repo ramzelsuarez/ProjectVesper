@@ -33,6 +33,7 @@ AVesperCharacter::AVesperCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 400.f, 0.f);
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
 	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
@@ -43,8 +44,10 @@ AVesperCharacter::AVesperCharacter()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetRootComponent());
 	CameraBoom->TargetArmLength = 300.f;
+	CameraBoom->bUsePawnControlRotation = true;
 
 	ViewCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("ViewCamera"));
+	ViewCamera->bUsePawnControlRotation = false;
 	ViewCamera->SetupAttachment(CameraBoom);
 
 	Hair = CreateDefaultSubobject<UGroomComponent>(TEXT("Hair"));
@@ -58,9 +61,26 @@ AVesperCharacter::AVesperCharacter()
 
 void AVesperCharacter::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+
+	UpdateGameplayCameraTransition(DeltaTime);
+
 	if (Attributes && VesperOverlay)
 	{
-		Attributes->RegenStamina(DeltaTime);
+		if (bIsSprinting && Attributes->GetStamina() > 0.f && IsUnoccupied())
+		{
+			Attributes->UseStamina(SprintStaminaDrainRate * DeltaTime);
+
+			if (Attributes->GetStamina() <= 0.f)
+			{
+				StopSprint();
+			}
+		}
+		else
+		{
+			Attributes->RegenStamina(DeltaTime);
+		}
+
 		VesperOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
 	}
 }
@@ -77,6 +97,9 @@ void AVesperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(EKeyAction, ETriggerEvent::Triggered, this, &AVesperCharacter::EKeyPressed);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AVesperCharacter::Attack);
 		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &AVesperCharacter::Dodge);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AVesperCharacter::StartSprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AVesperCharacter::StopSprint);
+		EnhancedInputComponent->BindAction(CameraTransitionAction, ETriggerEvent::Started, this, &AVesperCharacter::StartGameplayCameraTransition);
 	}
 }
 
@@ -128,12 +151,13 @@ void AVesperCharacter::BeginPlay()
 
 	Tags.Add(FName("EngageableTarget"));
 
-	InitializeVesperOverlay();
 	AddInputMappingContext();
+	ApplyMenuCameraPose();
 }
 
 void AVesperCharacter::Move(const FInputActionValue& Value)
 {
+	if (bIsInMenu) return;
 	if (ActionState != EActionState::EAS_Unoccupied) return;
 
 	const FVector2D MovementVector = Value.Get<FVector2D>();
@@ -152,6 +176,103 @@ void AVesperCharacter::Look(const FInputActionValue& Value)
 	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 	AddControllerYawInput(LookAxisVector.X);
 	AddControllerPitchInput(LookAxisVector.Y);
+}
+
+void AVesperCharacter::StartSprint()
+{
+	if (bIsInMenu) return;
+	if (!Attributes || !IsUnoccupied() || Attributes->GetStamina() <= 0.f) return;
+
+	bIsSprinting = true;
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+}
+
+void AVesperCharacter::StopSprint()
+{
+	bIsSprinting = false;
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+}
+
+void AVesperCharacter::ApplyMenuCameraPose()
+{
+	AController* LocalController = GetController();
+	if (!LocalController || !CameraBoom) return;
+
+	const FRotator ActorRot = GetActorRotation();
+
+	const FRotator MenuRot(
+		MenuPitch,
+		ActorRot.Yaw + 180.f,
+		0.f
+	);
+
+	LocalController->SetControlRotation(MenuRot);
+
+	CameraBoom->TargetArmLength = MenuArmLength;
+
+	FVector SocketOffset = CameraBoom->SocketOffset;
+	SocketOffset.Z = MenuSocketOffsetZ;
+	CameraBoom->SocketOffset = SocketOffset;
+}
+
+void AVesperCharacter::StartGameplayCameraTransition()
+{
+	AController* LocalController = GetController();
+	if (!LocalController || !CameraBoom || bCameraTransitionActive) return;
+
+	bCameraTransitionActive = true;
+	CameraTransitionElapsed = 0.f;
+
+	CameraTransitionStartRotation = LocalController->GetControlRotation();
+	CameraTransitionStartArmLength = CameraBoom->TargetArmLength;
+	CameraTransitionStartSocketOffsetZ = CameraBoom->SocketOffset.Z;
+
+	const FRotator ActorRot = GetActorRotation();
+
+	CameraTransitionTargetRotation = FRotator(
+		0.f,
+		ActorRot.Yaw,
+		0.f
+	);
+}
+
+void AVesperCharacter::UpdateGameplayCameraTransition(float DeltaTime)
+{
+	if (!bCameraTransitionActive) return;
+
+	AController* LocalController = GetController();
+	if (!LocalController || !CameraBoom)
+	{
+		bCameraTransitionActive = false;
+		return;
+	}
+
+	CameraTransitionElapsed += DeltaTime;
+
+	const float Alpha = FMath::Clamp(CameraTransitionElapsed / CameraTransitionDuration, 0.f, 1.f);
+	const float EasedAlpha = FMath::InterpEaseInOut(0.f, 1.f, Alpha, 2.f);
+
+	FVector SocketOffset = CameraBoom->SocketOffset;
+	SocketOffset.Z = FMath::Lerp(CameraTransitionStartSocketOffsetZ, GameplaySocketOffsetZ, EasedAlpha);
+	CameraBoom->SocketOffset = SocketOffset;
+
+	CameraBoom->TargetArmLength = FMath::Lerp(CameraTransitionStartArmLength, GameplayArmLength, EasedAlpha);
+
+	const FRotator NewRotation = FMath::Lerp(
+		CameraTransitionStartRotation,
+		CameraTransitionTargetRotation,
+		EasedAlpha
+	);
+
+	LocalController->SetControlRotation(NewRotation);
+
+	if (Alpha >= 1.f)
+	{
+		bCameraTransitionActive = false;
+		bIsInMenu = false;
+
+		InitializeVesperOverlay();
+	}
 }
 
 void AVesperCharacter::AddInputMappingContext()
@@ -194,6 +315,7 @@ void AVesperCharacter::EKeyPressed()
 
 void AVesperCharacter::Attack()
 {
+	if (bIsInMenu) return;
 	Super::Attack();
 	if (CanAttack())
 	{
@@ -341,6 +463,7 @@ void AVesperCharacter::SetHUDHealth()
 
 void AVesperCharacter::Dodge()
 {
+	if (bIsInMenu) return;
 	if (IsOccupied() || !HasEnoughStamina()) return;
 
 	PlayDodgeMontage();
@@ -354,6 +477,7 @@ void AVesperCharacter::Dodge()
 
 void AVesperCharacter::Jump()
 {
+	if (bIsInMenu) return;
 	if (IsUnoccupied())
 	{
 		Super::Jump();
