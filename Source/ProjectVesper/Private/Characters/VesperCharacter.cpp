@@ -99,7 +99,7 @@ void AVesperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &AVesperCharacter::Dodge);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AVesperCharacter::StartSprint);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AVesperCharacter::StopSprint);
-		EnhancedInputComponent->BindAction(CameraTransitionAction, ETriggerEvent::Started, this, &AVesperCharacter::StartGameplayCameraTransition);
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &AVesperCharacter::TogglePauseMenu);
 	}
 }
 

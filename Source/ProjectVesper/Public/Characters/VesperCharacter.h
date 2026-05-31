@@ -95,7 +95,10 @@ protected:
 	UInputAction* SprintAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	UInputAction* CameraTransitionAction;
+	UInputAction* PauseAction;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void TogglePauseMenu();
 
 	UFUNCTION(BlueprintCallable)
 	void StartGameplayCameraTransition();
