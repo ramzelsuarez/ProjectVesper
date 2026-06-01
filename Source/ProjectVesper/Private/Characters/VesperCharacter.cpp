@@ -66,6 +66,11 @@ void AVesperCharacter::Tick(float DeltaTime)
 
 	UpdateGameplayCameraTransition(DeltaTime);
 
+	if (bIsSprinting && (!IsUnoccupied() || !Attributes || Attributes->GetStamina() <= 0.f))
+	{
+		StopSprint();
+	}
+
 	if (Attributes && VesperOverlay)
 	{
 		if (bIsSprinting && Attributes->GetStamina() > 0.f && IsUnoccupied())
@@ -85,7 +90,6 @@ void AVesperCharacter::Tick(float DeltaTime)
 		VesperOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
 	}
 }
-
 void AVesperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -100,6 +104,7 @@ void AVesperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &AVesperCharacter::Dodge);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AVesperCharacter::StartSprint);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AVesperCharacter::StopSprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Canceled, this, &AVesperCharacter::StopSprint);
 		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &AVesperCharacter::TogglePauseMenu);
 	}
 }
