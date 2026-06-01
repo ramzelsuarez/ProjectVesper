@@ -131,6 +131,16 @@ void AVesperCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor*
 void AVesperCharacter::SetOverlappingItem(AItem* Item)
 {
 	OverlappingItem = Item;
+
+	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
+	if (OverlappingWeapon)
+	{
+		ShowPickupPrompt(OverlappingWeapon->GetWeaponName());
+	}
+	else
+	{
+		HidePickupPrompt();
+	}
 }
 
 void AVesperCharacter::AddSouls(ASoul* Soul)
@@ -309,11 +319,16 @@ void AVesperCharacter::EKeyPressed()
 	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
 	if (OverlappingWeapon)
 	{
+		const FString WeaponName = OverlappingWeapon->GetWeaponName();
+
 		if (EquippedWeapon)
 		{
 			EquippedWeapon->Destroy();
 		}
+
 		EquipWeapon(OverlappingWeapon);
+		HidePickupPrompt();
+		ShowPickupNotification(FString::Printf(TEXT("Obtained: %s"), *WeaponName));
 	}
 	else
 	{

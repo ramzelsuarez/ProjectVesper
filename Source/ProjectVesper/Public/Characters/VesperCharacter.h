@@ -105,6 +105,15 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void ShowGameOverScreen();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void ShowPickupPrompt(const FString& ItemName);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void HidePickupPrompt();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ShowPickupNotification(const FString& Message);
+
 	UFUNCTION(BlueprintCallable)
 	void StartGameplayCameraTransition();
 

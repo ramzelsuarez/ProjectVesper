@@ -62,6 +62,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	float Damage = 20.f;
 
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	FString WeaponName = TEXT("Weathered Longsword");
+
 public:
 	FORCEINLINE UBoxComponent* GetWeaponBox() const { return WeaponBox; }
+	FORCEINLINE FString GetWeaponName() const { return WeaponName; }
 };
