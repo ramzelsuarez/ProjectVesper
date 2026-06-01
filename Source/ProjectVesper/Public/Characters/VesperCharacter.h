@@ -102,6 +102,9 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void TogglePauseMenu();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void ShowGameOverScreen();
+
 	UFUNCTION(BlueprintCallable)
 	void StartGameplayCameraTransition();
 

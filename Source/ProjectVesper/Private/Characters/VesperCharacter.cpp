@@ -428,6 +428,14 @@ void AVesperCharacter::Die_Implementation()
 	Tags.Add(FName("Dead"));
 	ActionState = EActionState::EAS_Dead;
 	DisableMeshCollision();
+
+	FTimerHandle GameOverTimer;
+	GetWorldTimerManager().SetTimer(
+		GameOverTimer,
+		this,
+		&AVesperCharacter::ShowGameOverScreen,
+		2.0f
+	);
 }
 
 bool AVesperCharacter::HasEnoughStamina()
