@@ -22,6 +22,7 @@
 #include "Interfaces/PickupInterface.h"
 #include "Items/Soul.h"
 #include "Items/Treasure.h"
+#include "Items/HealthPickup.h"
 
 AVesperCharacter::AVesperCharacter()
 {
@@ -142,6 +143,15 @@ void AVesperCharacter::AddGold(ATreasure* Treasure)
 	{
 		Attributes->AddGold(Treasure->GetGold());
 		VesperOverlay->SetGold(Attributes->GetGold());
+	}
+}
+
+void AVesperCharacter::AddHealth(AHealthPickup* HealthPickup)
+{
+	if (Attributes && VesperOverlay)
+	{
+		Attributes->Heal(HealthPickup->GetHealthAmount());
+		VesperOverlay->SetHealthBarPercent(Attributes->GetHealthPercent());
 	}
 }
 

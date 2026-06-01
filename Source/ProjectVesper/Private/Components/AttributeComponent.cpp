@@ -23,6 +23,11 @@ void UAttributeComponent::UseStamina(float StaminaCost)
 	Stamina = FMath::Clamp(Stamina - StaminaCost, 0.f, MaxStamina);
 }
 
+void UAttributeComponent::Heal(float HealAmount)
+{
+	Health = FMath::Clamp(Health + HealAmount, 0.f, MaxHealth);
+}
+
 float UAttributeComponent::GetHealthPercent()
 {
 	return Health / MaxHealth;

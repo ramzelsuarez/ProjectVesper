@@ -8,6 +8,7 @@
 #include "BreakableActor.generated.h"
 
 class UGeometryCollectionComponent;
+class AHealthPickup;
 
 UCLASS()
 class PROJECTVESPER_API ABreakableActor : public AActor, public IHitInterface
@@ -33,6 +34,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Breakable Properties")
 	TArray<TSubclassOf<class ATreasure>> TreasureClasses;
+
+	UPROPERTY(EditAnywhere, Category = "Breakable Properties")
+	TArray<TSubclassOf<class AHealthPickup>> HealthPickupClasses;
 
 	bool bBroken = false;
 };

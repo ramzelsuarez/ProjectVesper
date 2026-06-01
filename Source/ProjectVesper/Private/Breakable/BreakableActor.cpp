@@ -5,6 +5,7 @@
 #include "GeometryCollection/GeometryCollectionComponent.h"
 #include "Items/Treasure.h"
 #include "Components/CapsuleComponent.h"
+#include "Items/HealthPickup.h"
 
 ABreakableActor::ABreakableActor()
 {
@@ -39,14 +40,23 @@ void ABreakableActor::GetHit_Implementation(const FVector& ImpactPoint, AActor* 
 	if (bBroken) return;
 	bBroken = true;
 	UWorld* World = GetWorld();
-	if (World && TreasureClasses.Num() > 0)
+	if (World)
 	{
 		FVector Location = GetActorLocation();
 		Location.Z += 75.f;
 
-		const int32 Selection = FMath::RandRange(0, TreasureClasses.Num() - 1);
+		const bool bSpawnHealth = HealthPickupClasses.Num() > 0 && FMath::RandBool();
 
-		World->SpawnActor<ATreasure>(TreasureClasses[Selection], Location, GetActorRotation());
+		if (bSpawnHealth)
+		{
+			const int32 Selection = FMath::RandRange(0, HealthPickupClasses.Num() - 1);
+			World->SpawnActor<AHealthPickup>(HealthPickupClasses[Selection], Location, GetActorRotation());
+		}
+		else if (TreasureClasses.Num() > 0)
+		{
+			const int32 Selection = FMath::RandRange(0, TreasureClasses.Num() - 1);
+			World->SpawnActor<ATreasure>(TreasureClasses[Selection], Location, GetActorRotation());
+		}
 	}
 }
 

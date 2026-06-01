@@ -17,6 +17,7 @@ class UGroomComponent;
 class AItem;
 class ASoul;
 class ATreasure;
+class AHealthPickup;
 class UAnimMontage;
 class UVesperOverlay;
 
@@ -36,6 +37,7 @@ public:
 	virtual void SetOverlappingItem(AItem* Item) override;
 	virtual void AddSouls(ASoul* Soul) override;
 	virtual void AddGold(ATreasure* Treasure) override;
+	virtual void AddHealth(AHealthPickup* HealthPickup) override;
 protected:
 	virtual void BeginPlay() override;
 
