@@ -5,10 +5,12 @@
 #include "CoreMinimal.h"
 #include "Characters/BaseCharacter.h"
 #include "Characters/CharacterTypes.h"
+#include "Components/WidgetComponent.h"
 #include "Enemy.generated.h"
 
 class UHealthBarComponent;
 class UPawnSensingComponent;
+class UWidgetComponent;
 
 UCLASS()
 class PROJECTVESPER_API AEnemy : public ABaseCharacter
@@ -27,6 +29,9 @@ public:
 	/** <IHitInterface> */
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
 	/** </IHitInterface> */
+
+	void ShowLockOnWidget();
+	void HideLockOnWidget();
 
 protected:
 	/** <AActor> */
@@ -134,4 +139,7 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Combat)
 	TSubclassOf<class ASoul> SoulClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "Lock On")
+	UWidgetComponent* LockOnWidget;
 };

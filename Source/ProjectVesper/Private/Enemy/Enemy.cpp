@@ -12,6 +12,7 @@
 #include "Weapons/Weapon.h"
 #include "NavigationPath.h"
 #include "Items/Soul.h"
+#include "Components/WidgetComponent.h"
 
 AEnemy::AEnemy()
 {
@@ -24,6 +25,13 @@ AEnemy::AEnemy()
 
 	HealthBarWidget = CreateDefaultSubobject<UHealthBarComponent>(TEXT("HealthBar"));
 	HealthBarWidget->SetupAttachment(GetRootComponent());
+
+	LockOnWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOnWidget"));
+	LockOnWidget->SetupAttachment(GetMesh());
+	LockOnWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	LockOnWidget->SetDrawSize(FVector2D(48.f, 48.f));
+	LockOnWidget->SetRelativeLocation(FVector(0.f, 0.f, 120.f));
+	LockOnWidget->SetVisibility(false);
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationPitch = false;
@@ -87,6 +95,22 @@ void AEnemy::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 	if (IsInsideAttackRadius())
 	{
 		if (!IsDead()) StartAttackTimer();
+	}
+}
+
+void AEnemy::ShowLockOnWidget()
+{
+	if (LockOnWidget)
+	{
+		LockOnWidget->SetVisibility(true);
+	}
+}
+
+void AEnemy::HideLockOnWidget()
+{
+	if (LockOnWidget)
+	{
+		LockOnWidget->SetVisibility(false);
 	}
 }
 

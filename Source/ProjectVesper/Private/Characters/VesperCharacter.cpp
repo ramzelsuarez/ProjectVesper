@@ -23,6 +23,8 @@
 #include "Items/Soul.h"
 #include "Items/Treasure.h"
 #include "Items/HealthPickup.h"
+#include "Enemy/Enemy.h"
+#include "Kismet/GameplayStatics.h"
 
 AVesperCharacter::AVesperCharacter()
 {
@@ -65,6 +67,7 @@ void AVesperCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdateGameplayCameraTransition(DeltaTime);
+	UpdateLockOn(DeltaTime);
 
 	if (bIsSprinting && (!IsUnoccupied() || !Attributes || Attributes->GetStamina() <= 0.f))
 	{
@@ -106,6 +109,7 @@ void AVesperCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AVesperCharacter::StopSprint);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Canceled, this, &AVesperCharacter::StopSprint);
 		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &AVesperCharacter::TogglePauseMenu);
+		EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, this, &AVesperCharacter::ToggleLockOn);
 	}
 }
 
@@ -471,6 +475,76 @@ void AVesperCharacter::FinishEquipping()
 void AVesperCharacter::HitReactEnd()
 {
 	ActionState = EActionState::EAS_Unoccupied;
+}
+
+void AVesperCharacter::ToggleLockOn()
+{
+	if (bIsLockedOn)
+	{
+		ClearLockOn();
+		return;
+	}
+
+	LockedTarget = FindNearestEnemy();
+
+	if (LockedTarget)
+	{
+		bIsLockedOn = true;
+		CombatTarget = LockedTarget;
+
+		LockedTarget->ShowLockOnWidget();
+	}
+}
+
+AEnemy* AVesperCharacter::FindNearestEnemy()
+{
+	TArray<AActor*> Enemies;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemy::StaticClass(), Enemies);
+
+	AEnemy* ClosestEnemy = nullptr;
+	float ClosestDistance = LockOnRadius;
+
+	for (AActor* Actor : Enemies)
+	{
+		AEnemy* Enemy = Cast<AEnemy>(Actor);
+		if (!Enemy || Enemy->ActorHasTag(FName("Dead"))) continue;
+
+		const float Distance = FVector::Dist(GetActorLocation(), Enemy->GetActorLocation());
+
+		if (Distance < ClosestDistance)
+		{
+			ClosestDistance = Distance;
+			ClosestEnemy = Enemy;
+		}
+	}
+
+	return ClosestEnemy;
+}
+
+void AVesperCharacter::UpdateLockOn(float DeltaTime)
+{
+	if (!bIsLockedOn || !LockedTarget) return;
+
+	if (LockedTarget->ActorHasTag(FName("Dead")) ||
+		FVector::Dist(GetActorLocation(), LockedTarget->GetActorLocation()) > LockOnRadius)
+	{
+		ClearLockOn();
+		return;
+	}
+
+	CombatTarget = LockedTarget;
+}
+
+void AVesperCharacter::ClearLockOn()
+{
+	if (LockedTarget)
+	{
+		LockedTarget->HideLockOnWidget();
+	}
+
+	bIsLockedOn = false;
+	LockedTarget = nullptr;
+	CombatTarget = nullptr;
 }
 
 void AVesperCharacter::InitializeVesperOverlay()

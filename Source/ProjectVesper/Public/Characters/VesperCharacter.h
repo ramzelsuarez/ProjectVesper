@@ -20,6 +20,7 @@ class ATreasure;
 class AHealthPickup;
 class UAnimMontage;
 class UVesperOverlay;
+class AEnemy;
 
 UCLASS()
 class PROJECTVESPER_API AVesperCharacter : public ABaseCharacter, public IPickupInterface
@@ -99,6 +100,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* PauseAction;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* LockOnAction;
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void TogglePauseMenu();
 
@@ -177,6 +181,19 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera Transition", meta = (AllowPrivateAccess = "true"))
 	float MenuPitch = -8.f;
+
+	UPROPERTY(EditAnywhere, Category = "Lock On")
+	float LockOnRadius = 1200.f;
+
+	UPROPERTY()
+	AEnemy* LockedTarget = nullptr;
+
+	bool bIsLockedOn = false;
+
+	void ToggleLockOn();
+	AEnemy* FindNearestEnemy();
+	void UpdateLockOn(float DeltaTime);
+	void ClearLockOn();
 
 	bool bCameraTransitionActive = false;
 	float CameraTransitionElapsed = 0.f;
