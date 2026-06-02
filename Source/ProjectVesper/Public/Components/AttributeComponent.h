@@ -52,11 +52,14 @@ public:
 	void ReceiveDamage(float Damage);
 	void UseStamina(float StaminaCost);
 	void Heal(float HealAmount);
-	float GetHealthPercent();
 	float GetStaminaPercent();
 	bool IsAlive();
 	void AddSouls(int32 NumberOfSouls);
 	void AddGold(int32 AmountOfGold);
+
+	UFUNCTION(BlueprintCallable)
+	float GetHealthPercent();
+
 	FORCEINLINE int32 GetGold() const { return Gold; }
 	FORCEINLINE int32 GetSouls() const { return Souls; }
 	FORCEINLINE float GetDodgeCost() const { return DodgeCost; }
