@@ -182,6 +182,24 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera Transition", meta = (AllowPrivateAccess = "true"))
 	float MenuPitch = -8.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Menu Camera Drift", meta = (AllowPrivateAccess = "true"))
+	bool bUseMenuCameraDrift = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Menu Camera Drift", meta = (AllowPrivateAccess = "true"))
+	float MenuDriftYawAmount = 2.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Menu Camera Drift", meta = (AllowPrivateAccess = "true"))
+	float MenuDriftPitchAmount = 0.6f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Menu Camera Drift", meta = (AllowPrivateAccess = "true"))
+	float MenuDriftSpeed = 0.35f;
+
+	float MenuCameraBaseYaw = 0.f;
+	float MenuCameraBasePitch = 0.f;
+	float MenuDriftTime = 0.f;
+
+	void UpdateMenuCameraDrift(float DeltaTime);
+
 	UPROPERTY(EditAnywhere, Category = "Lock On")
 	float LockOnRadius = 1200.f;
 

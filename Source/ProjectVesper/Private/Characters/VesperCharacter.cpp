@@ -66,6 +66,7 @@ void AVesperCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	UpdateMenuCameraDrift(DeltaTime);
 	UpdateGameplayCameraTransition(DeltaTime);
 	UpdateLockOn(DeltaTime);
 
@@ -236,6 +237,10 @@ void AVesperCharacter::ApplyMenuCameraPose()
 	);
 
 	LocalController->SetControlRotation(MenuRot);
+
+	MenuCameraBaseYaw = MenuRot.Yaw;
+	MenuCameraBasePitch = MenuRot.Pitch;
+	MenuDriftTime = 0.f;
 
 	CameraBoom->TargetArmLength = MenuArmLength;
 
@@ -475,6 +480,27 @@ void AVesperCharacter::FinishEquipping()
 void AVesperCharacter::HitReactEnd()
 {
 	ActionState = EActionState::EAS_Unoccupied;
+}
+
+void AVesperCharacter::UpdateMenuCameraDrift(float DeltaTime)
+{
+	if (!bIsInMenu || bCameraTransitionActive || !bUseMenuCameraDrift) return;
+
+	AController* LocalController = GetController();
+	if (!LocalController) return;
+
+	MenuDriftTime += DeltaTime;
+
+	const float YawOffset = FMath::Sin(MenuDriftTime * MenuDriftSpeed) * MenuDriftYawAmount;
+	const float PitchOffset = FMath::Sin(MenuDriftTime * MenuDriftSpeed * 0.7f) * MenuDriftPitchAmount;
+
+	const FRotator DriftRotation(
+		MenuCameraBasePitch + PitchOffset,
+		MenuCameraBaseYaw + YawOffset,
+		0.f
+	);
+
+	LocalController->SetControlRotation(DriftRotation);
 }
 
 void AVesperCharacter::ToggleLockOn()
